@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
         protocol:"https",
         hostname:"liveblocks.io",
         port:"",
-        pathname:"/avatars/avatar-*.png"
       }
     ]
   }

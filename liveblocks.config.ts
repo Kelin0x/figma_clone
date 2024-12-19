@@ -1,4 +1,7 @@
 // Define Liveblocks types for your application
+
+import { LiveMap } from "@liveblocks/client";
+
 // https://liveblocks.io/docs/api-reference/liveblocks-react#Typing-your-data
 declare global {
   interface Liveblocks {
@@ -12,6 +15,7 @@ declare global {
     Storage: {
       // Example, a conflict-free list
       // animals: LiveList<string>;
+      canvasObject: LiveMap<string,any>;
     };
 
     // Custom user info set when authenticating with a secret key

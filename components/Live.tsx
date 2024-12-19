@@ -2,12 +2,15 @@ import {  useBroadcastEvent, useEventListener, useMyPresence, useOthers } from "
 import LiveCursors from "./cursor/LiveCursors";
 import { useCallback, useEffect, useState } from "react";
 import CursorChat from "./cursor/CursorChat";
-import { CursorChatProps, CursorMode, CursorState, Reaction, ReactionEvent } from "@/types/type";
+import {  CursorMode, CursorState, Reaction, ReactionEvent } from "@/types/type";
 import ReactionSelector from "./reaction/ReactionButton";
 import FlyingReaction from "./reaction/FlyingReaction";
 import useInterval from "@/hooks/useInterval";
 
-const Live = () => {
+type Props = {
+    canvasRef: React.MutableRefObject<HTMLCanvasElement>;
+};
+const Live = ({canvasRef}:Props) => {
 
     const others = useOthers(); 
 
@@ -24,7 +27,7 @@ const Live = () => {
     const broadcast=useBroadcastEvent();
 
     useInterval(()=>{
-        setReaction((reactions)=>reactions.filter((r)=>Date.now()-r.timestamp>4000  ));
+        setReaction((reactions)=>reactions.filter((r)=>r.timestamp>Date.now()-4000)); 
     },1000)
 
     useInterval(() => {
@@ -133,13 +136,14 @@ const Live = () => {
 
     return (
         <div
+            id="canvas"
             onPointerMove={handlePointerMove}
             onPointerLeave={handlePointerLeave}
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
             className="h-[100vh] w-full flex justify-center items-center text-center"
         >
-            <canvas />
+            <canvas ref={canvasRef} />
             {reaction.map((r)=>{
                 return <FlyingReaction
                     key={r.timestamp.toString()}
