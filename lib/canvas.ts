@@ -103,7 +103,7 @@ export const handleCanvasMouseDown = ({
 };
 
 // handle mouse move event on canvas to draw shapes with different dimensions
-export const handleCanvasMouseMove = ({
+export const handleCanvaseMouseMove = ({
   options,
   canvas,
   isDrawing,
@@ -340,32 +340,45 @@ export const renderCanvas = ({
   canvasObjects,
   activeObjectRef,
 }: RenderCanvas) => {
-  if (!fabricRef.current) return;
-  fabricRef.current.clear();
+  // clear canvas
+  fabricRef.current?.clear();
 
-  // 检查 canvasObjects 是否存在且有 entries 方法
-  if (!canvasObjects?.entries) {
-    console.log('Canvas objects not ready:', canvasObjects);
-    return;
-  }
-
-  // 使用 entries() 方法获取所有对象
-  for (const [objectId, objectData] of canvasObjects.entries()) {
+  // render all objects on canvas
+  Array.from(canvasObjects, ([objectId, objectData]) => {
+    /**
+     * enlivenObjects() is used to render objects on canvas.
+     * It takes two arguments:
+     * 1. objectData: object data to render on canvas
+     * 2. callback: callback function to execute after rendering objects
+     * on canvas
+     *
+     * enlivenObjects: http://fabricjs.com/docs/fabric.util.html#.enlivenObjectEnlivables
+     */
     fabric.util.enlivenObjects(
       [objectData],
       (enlivenedObjects: fabric.Object[]) => {
         enlivenedObjects.forEach((enlivenedObj) => {
+          // if element is active, keep it in active state so that it can be edited further
           if (activeObjectRef.current?.objectId === objectId) {
             fabricRef.current?.setActiveObject(enlivenedObj);
           }
+
+          // add object to canvas
           fabricRef.current?.add(enlivenedObj);
         });
       },
+      /**
+       * specify namespace of the object for fabric to render it on canvas
+       * A namespace is a string that is used to identify the type of
+       * object.
+       *
+       * Fabric Namespace: http://fabricjs.com/docs/fabric.html
+       */
       "fabric"
     );
-  }
+  });
 
-  fabricRef.current.renderAll();
+  fabricRef.current?.renderAll();
 };
 
 // resize canvas dimensions on window resize
